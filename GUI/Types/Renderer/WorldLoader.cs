@@ -203,18 +203,10 @@ namespace GUI.Types.Renderer
                         : name;
 
                     result.CameraMatrices.Add(cameraName, transformationMatrix);
-
-                    continue;
                 }
                 else if (isGlobalLight)
                 {
                     result.GlobalLightPosition = positionVector;
-
-                    continue;
-                }
-                else if (model == null)
-                {
-                    continue;
                 }
 
                 var objColor = Vector4.One;
@@ -231,6 +223,13 @@ namespace GUI.Types.Renderer
                     objColor.Y = colourBytes[1] / 255.0f;
                     objColor.Z = colourBytes[2] / 255.0f;
                     objColor.W = colourBytes[3] / 255.0f;
+                }
+
+                if (!classname.StartsWith("trigger_"))
+                {
+                    // TODO: Create meshes out of vphys for triggers so we can draw them
+                    // TODO: Smarter model or sprite
+                    model ??= "models/editor/air_node.vmdl";
                 }
 
                 var newEntity = guiContext.LoadFileByAnyMeansNecessary(model + "_c");
