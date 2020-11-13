@@ -380,6 +380,11 @@ namespace GUI
                 // since we're in a separate thread, invoke to update the UI
                 Invoke((MethodInvoker)(() => findToolStripButton.Enabled = true));
 
+                if (input == null)
+                {
+                    Settings.AddRecentPackage(fileName);
+                }
+
                 return tab;
             }
             else if (Types.Viewers.CompiledShader.IsAccepted(magic))

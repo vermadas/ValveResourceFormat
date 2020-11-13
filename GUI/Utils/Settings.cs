@@ -11,11 +11,12 @@ namespace GUI.Utils
     {
         public class AppConfig
         {
-            public List<string> GameSearchPaths { get; set; } = new List<string>();
+            public List<string> GameSearchPaths { get; set; }
             public string BackgroundColor { get; set; } = string.Empty;
             public string OpenDirectory { get; set; } = string.Empty;
             public string SaveDirectory { get; set; } = string.Empty;
-            public Dictionary<string, float[]> SavedCameras { get; set; } = new Dictionary<string, float[]>();
+            public Dictionary<string, float[]> SavedCameras { get; set; }
+            public List<string> RecentPackages { get; set; }
         }
 
         private static string SettingsFilePath;
@@ -41,10 +42,9 @@ namespace GUI.Utils
 
             BackgroundColor = ColorTranslator.FromHtml(Config.BackgroundColor);
 
-            if (Config.SavedCameras == null)
-            {
-                Config.SavedCameras = new Dictionary<string, float[]>();
-            }
+            Config.GameSearchPaths ??= new List<string>();
+            Config.RecentPackages ??= new List<string>();
+            Config.SavedCameras ??= new Dictionary<string, float[]>();
         }
 
         public static void Save()
@@ -55,6 +55,19 @@ namespace GUI.Utils
             {
                 KVSerializer.Create(KVSerializationFormat.KeyValues1Text).Serialize(stream, Config, nameof(ValveResourceFormat));
             }
+        }
+
+        public static void AddRecentPackage(string path)
+        {
+            Config.RecentPackages.Remove(path);
+            Config.RecentPackages.Add(path);
+
+            if (Config.RecentPackages.Count > 10)
+            {
+                Config.RecentPackages.RemoveAt(0);
+            }
+
+            Save();
         }
     }
 }
