@@ -348,7 +348,7 @@ namespace ValveResourceFormat
                     return new KeyValuesOrNTRO(BlockType.AGRP, "AnimationGroupResourceData_t");
 
                 case "PHYS":
-                    return new KeyValuesOrNTRO(BlockType.PHYS, "VPhysXAggregateData_t");
+                    return new PhysAggregateData(BlockType.PHYS);
             }
 
             throw new ArgumentException(string.Format("Unrecognized block type '{0}'", input));
@@ -399,6 +399,9 @@ namespace ValveResourceFormat
                 case ResourceType.ResourceManifest:
                     return new ResourceManifest();
 
+                case ResourceType.PhysicsCollisionMesh:
+                    return new PhysAggregateData();
+
                 case ResourceType.Mesh:
                     if (Version == 0)
                     {
@@ -423,7 +426,8 @@ namespace ValveResourceFormat
                    || type == ResourceType.WorldNode
                    || type == ResourceType.Particle
                    || type == ResourceType.Material
-                   || type == ResourceType.EntityLump;
+                   || type == ResourceType.EntityLump
+                   || type == ResourceType.PhysicsCollisionMesh;
         }
 
         private static ResourceType DetermineResourceTypeByCompilerIdentifier(SpecialDependencies.SpecialDependency input)
