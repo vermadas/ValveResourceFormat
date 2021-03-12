@@ -77,6 +77,19 @@ namespace GUI.Types.Renderer
                 Scene.Add(modelSceneNode, false);
 
                 phys = model.GetEmbeddedPhys();
+                if (phys == null)
+                {
+                    var refPhysicsPaths = model.GetReferencedPhysNames();
+                    if (refPhysicsPaths.Any())
+                    {
+                        //TODO are there any models with more than one vphys?
+                        var newResource = Scene.GuiContext.LoadFileByAnyMeansNecessary(refPhysicsPaths.First() + "_c");
+                        if (newResource != null)
+                        {
+                            phys = (PhysAggregateData)newResource.DataBlock;
+                        }
+                    }
+                }
 
                 var meshGroups = modelSceneNode.GetMeshGroups();
 
@@ -126,9 +139,9 @@ namespace GUI.Types.Renderer
                 Scene.Add(physSceneNode, false);
 
                 //disabled by dafault. Enable if viewing only phys
-                physSceneNode.enabled = (model == null);
+                physSceneNode.Enabled = (model == null);
 
-                ViewerControl.AddCheckBox("Show Physics", physSceneNode.enabled, (v) => { physSceneNode.enabled = v; });
+                ViewerControl.AddCheckBox("Show Physics", physSceneNode.Enabled, (v) => { physSceneNode.Enabled = v; });
             }
         }
 
