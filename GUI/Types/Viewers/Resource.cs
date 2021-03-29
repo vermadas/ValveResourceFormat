@@ -273,8 +273,10 @@ namespace GUI.Types.Viewers
                 }
 
                 var tab2 = new TabPage(block.Type.ToString());
+#if !DEBUG
                 try
                 {
+#endif
                     var control = new TextBox();
                     control.Font = new Font(FontFamily.GenericMonospace, control.Font.Size);
 
@@ -314,6 +316,7 @@ namespace GUI.Types.Viewers
                     control.ReadOnly = true;
                     control.ScrollBars = ScrollBars.Both;
                     tab2.Controls.Add(control);
+#if !DEBUG
                 }
                 catch (Exception e)
                 {
@@ -329,6 +332,7 @@ namespace GUI.Types.Viewers
                         bv.SetBytes(resource.Reader.ReadBytes((int) block.Size));
                     }));
                 }
+#endif
 
                 resTabs.TabPages.Add(tab2);
             }

@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ValveResourceFormat.Blocks;
+using ValveResourceFormat.Serialization;
+using ValveResourceFormat.Utils;
 
 namespace ValveResourceFormat.ResourceTypes
 {
@@ -18,6 +20,11 @@ namespace ValveResourceFormat.ResourceTypes
 
         public byte[] Data { get; private set; }
         public uint CRC32 { get; private set; }
+        public IKeyValueCollection SourceMap => _resource.GetBlockByType(BlockType.SrMa) is ResourceData sourceMap
+            ? sourceMap.AsKeyValueCollection()
+            : default;
+
+        private Resource _resource;
 
         public Panorama()
         {
@@ -26,6 +33,7 @@ namespace ValveResourceFormat.ResourceTypes
 
         public override void Read(BinaryReader reader, Resource resource)
         {
+            _resource = resource;
             reader.BaseStream.Position = Offset;
 
             CRC32 = reader.ReadUInt32();
@@ -56,9 +64,20 @@ namespace ValveResourceFormat.ResourceTypes
             }
         }
 
-        public override string ToString()
+        public override string ToString() => ToString(true);
+
+        public string ToString(bool applySourceMapIfPresent)
         {
-            return Encoding.UTF8.GetString(Data);
+            if (applySourceMapIfPresent && (SourceMap != default))
+            {
+                var sourceBytes = SourceMapDecoder.Decode(Data, SourceMap);
+                return Encoding.UTF8.GetString(sourceBytes);
+
+            }
+            else
+            {
+                return Encoding.UTF8.GetString(Data);
+            }
         }
     }
 }
